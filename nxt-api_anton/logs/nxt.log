@@ -1,0 +1,15 @@
+[27/Apr/2024 16:03:32] INFO - NXT - 4256 - ['Imagenet']
+[27/Apr/2024 16:04:01] INFO - NXT - 12484 - ['Imagenet']
+[27/Apr/2024 16:04:02] INFO - NXT - 12484 - None
+[27/Apr/2024 16:04:02] INFO - NXT - 12484 -  Angle:0 CenterX:200 CenterY:200 Height:200 Identifier:roi_2 Width:200
+[27/Apr/2024 16:05:36] INFO - NXT - 5636 - ['Imagenet']
+[27/Apr/2024 16:05:36] INFO - NXT - 5636 - None
+[27/Apr/2024 16:05:36] INFO - NXT - 5636 -  Angle:0 CenterX:200 CenterY:200 Height:200 Identifier:roi_2 Width:200
+[27/Apr/2024 16:05:51] INFO - NXT - 3000 - ['Imagenet']
+[27/Apr/2024 16:05:51] INFO - NXT - 3000 - None
+[27/Apr/2024 16:05:51] INFO - NXT - 3000 -  Angle:0 CenterX:200 CenterY:200 Height:200 Identifier:roi_2 Width:200
+[27/Apr/2024 16:05:51] INFO - NXT - 3000 - {'class': [], 'count': [], 'data': {'Data': '[{"Height":200,"Inference":[{"Class":"wing","Probability":"0.12"},{"Class":"jellyfish","Probability":"0.08"},{"Class":"sea_lion","Probability":"0.05"},{"Class":"scuba_diver","Probability":"0.04"}],"OffsetX":100,"OffsetY":100,"ROI_Name":"roi_2","Width":200}]'}, 'highlight': {'Highlight': {'format': {'bgColor': '#ffb6c1', 'highlight': True, 'highlightScaling': '0.60'}, 'value': 'wing: 0.12'}}, 'inference': {'Top1': 'wing', 'Top2': 'jellyfish', 'Top3': 'sea_lion', 'Top4': 'scuba_diver'}, 'inference_propability': {'Top1': '0.12', 'Top2': '0.08', 'Top3': '0.05', 'Top4': '0.04'}, 'inferencetime': {'Time': 5}}
+[27/Apr/2024 16:06:02] INFO - NXT - 9820 - ['Imagenet']
+[27/Apr/2024 16:06:02] INFO - NXT - 9820 - None
+[27/Apr/2024 16:06:02] INFO - NXT - 9820 -  Angle:0 CenterX:200 CenterY:200 Height:200 Identifier:roi_2 Width:200
+[27/Apr/2024 16:06:03] INFO - NXT - 9820 - {'class': {'Content1': 'sea_lion', 'Content2': 'shower_curtain'}, 'count': {'Content1': '1', 'Content2': '1'}, 'data': {'Data': '[{"Height":200,"Inference":[{"Class":"shower_curtain","Probability":"0.09"}],"OffsetX":50,"OffsetY":100,"ROI_Name":"roi_1","Width":300},{"Height":200,"Inference":[{"Class":"sea_lion","Probability":"0.08"}],"OffsetX":100,"OffsetY":100,"ROI_Name":"roi_2","Width":200}]'}, 'highlight': {'Highlight0': {'format': {'bgColor': '#90ee90', 'highlight': True, 'highlightScaling': '0.60'}, 'value': 'sea_lion: 1'}, 'Highlight1': {'format': {'bgColor': '#90ee90', 'highlight': True, 'highlightScaling': '0.60'}, 'value': 'shower_curtain: 1'}}, 'inference': [], 'inference_propability': [], 'inferencetime': {'Time': 5}}
