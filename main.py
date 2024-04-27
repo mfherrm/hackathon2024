@@ -4,7 +4,7 @@ from transformBbox import transformBbox
 from setStatus import setStatus
 from openStream import openStream
 
-frame = openStream("http://169.254.34.119/streaming/stream3/video.mjpeg", "admin", "sdi")
+#frame = openStream("http://169.254.34.119/streaming/stream3/video.mjpeg", "admin", "sdi")
 
 model = YOLO('yolov8m-pose.pt')
 
