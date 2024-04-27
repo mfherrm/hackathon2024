@@ -17,9 +17,13 @@ status_a = 'Decreasing'
 status_n = 'Decreasing'
 
 for r in results:
-
-    x1, y1, x2, y2 = transformBbox(r.boxes.xywh[0][0], r.boxes.xywh[0][1], r.boxes.xywh[0][2], r.boxes.xywh[0][3])
-
+    try:
+        x1, y1, x2, y2 = transformBbox(r.boxes.xywh[0][0], r.boxes.xywh[0][1], r.boxes.xywh[0][2], r.boxes.xywh[0][3])
+        y2l = y2
+        y1l = y1
+    except:
+        y2= y2l
+        y1 = y1l
     # If bbox does not exist, then the squat just starts
     if bbox_orig is None:
         bbox_orig = abs(y2-y1)
