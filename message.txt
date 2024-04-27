@@ -1,0 +1,40 @@
+from ultralytics import YOLO
+import cv2
+
+
+
+
+            results = model(source=0, show=True, conf=0.75, save=True, stream=True)
+
+            bbox_orig = None
+            bsize = 999999999
+            status_a = 'Decreasing'
+            status_n = 'Decreasing'
+            for r in results:
+                for kp in zip(keypoint_labels.values(), r.keypoints[0].xy[0]):
+                    print(kp)
+                    print('-' * 40)
+                x1, y1, x2, y2 = yolo2bbox(r.boxes.xywh[0][0], r.boxes.xywh[0][1], r.boxes.xywh[0][2], r.boxes.xywh[0][3])
+                if bbox_orig is None:
+                    bbox_orig = abs(y2-y1)
+                b1 = bsize
+                b2 = abs(y2-y1)
+                bsize = b2
+                status_a = status_n
+                if (b2-b1)/b1 < -0.01:
+                    status_n = 'Decreasing'
+                elif (b2-b1)/b1 > 0.025:
+                    status_n = 'Increasing'
+                bsize = b2
+                print(status_n)
+                if status_a != status_n:
+                    print("I just changed status")
+                    for kp in zip(keypoint_labels.values(), r.keypoints[0].xy[0]):
+                        print(kp)
+                        print('-' * 40)
+                if status_n == 'Increasing' and abs(bbox_orig - b2) <= 3:
+                    print("Squat ended")
+                    for kp in zip(keypoint_labels.values(), r.keypoints[0].xy[0]):
+                        print(kp)
+                        print('-' * 40)
+                    break

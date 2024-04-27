@@ -2,9 +2,13 @@ from ultralytics import YOLO
 from getLabelPos import getLabelPos
 from transformBbox import transformBbox
 from setStatus import setStatus
+from openStream import openStream
+
+frame = openStream("http://169.254.34.119/streaming/stream3/video.mjpeg", "admin", "sdi")
 
 model = YOLO('yolov8m-pose.pt')
 
+#results = model(source=frame, show=True, conf=0.75, save=True, stream=True)
 results = model(source=0, show=True, conf=0.75, save=True, stream=True)
 
 bbox_orig = None
