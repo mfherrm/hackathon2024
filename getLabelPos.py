@@ -1,5 +1,27 @@
 import numpy as np
 import pandas as pd
+
+def calculate_angle(start, end, connection):
+    to_end = end - connection
+    to_start = start - connection
+
+    # Calculate the dot product and magnitudes of the vectors
+    dot_product = np.dot(to_start, to_end)
+    magnitude_to_end = np.linalg.norm(to_end)
+    magnitude_to_start = np.linalg.norm(to_start)
+
+    try:
+        # Calculate the cosine of the angle between the vectors
+        cosine_angle = dot_product / (magnitude_to_end * magnitude_to_start)
+
+        # Calculate the angle in radians and convert it to degrees
+        angle_radians = np.arccos(cosine_angle)
+        angle_degrees = np.degrees(angle_radians)
+
+        return angle_degrees
+    except:
+        return -999
+
 def getLabelPos(kp):
     # Define a dictionary mapping keypoint indices to body part names
     keypoint_labels = {
@@ -28,176 +50,55 @@ def getLabelPos(kp):
                                   "y": float(kp[1][1])
                                   }
         coordinates[kp[0]] = np.array(kp[1].cpu())
-    print(coordinates)
 
-    # print elbow angles
+    # Ideal angles (DUMMY)
+    ideal_arm = 180
+    ideal_leg = 90
+    ideal_hip = 75
 
-    r_wrist = coordinates["Right Wrist"]
-    r_elbow = coordinates["Right Elbow"]
-    r_shoulder = coordinates["Right Shoulder"]
+    # Calc the real angle
+    r_arm_angle = calculate_angle(coordinates["Right Wrist"], coordinates["Right Shoulder"], coordinates["Right Elbow"])
+    l_arm_angle = calculate_angle(coordinates["Left Wrist"], coordinates["Left Shoulder"], coordinates["Left Elbow"])
 
-    # print(r_elbow,r_wrist,r_shoulder)
+    r_leg_angle = calculate_angle(coordinates["Right Ankle"], coordinates["Right Hip"], coordinates["Right Knee"])
+    l_leg_angle = calculate_angle(coordinates["Left Ankle"], coordinates["Left Hip"], coordinates["Left Knee"])
 
-    upper_arm_vector = r_shoulder - r_elbow
-    lower_arm_vector = r_wrist - r_elbow
+    r_hip_angle = calculate_angle(coordinates["Right Knee"], coordinates["Right Shoulder"], coordinates["Right Hip"])
+    l_hip_angle = calculate_angle(coordinates["Left Knee"], coordinates["Left Shoulder"], coordinates["Left Hip"])
 
-    # print(upper_arm_vector)
-    # print(lower_arm_vector)
-    # Calculate the dot product and magnitudes of the vectors
-    dot_product = np.dot(lower_arm_vector, upper_arm_vector)
-    magnitude_upper_arm = np.linalg.norm(upper_arm_vector)
-    magnitude_lower_arm = np.linalg.norm(lower_arm_vector)
+    # print("Right Arm Angle:", r_arm_angle)
+    # print("Left Arm Angle:", l_arm_angle)
+    # print("Right Leg Angle:", r_leg_angle)
+    # print("Left Leg Angle:", l_leg_angle)
+    # print("Right Hip Angle:", r_hip_angle)
+    # print("Left Hip Angle:", l_hip_angle)
 
-    # Calculate the cosine of the angle between the vectors
-    try:
-        cosine_angle = dot_product / (magnitude_upper_arm * magnitude_lower_arm)
+    # Calculate differences
+    diff_r_arm = r_arm_angle - ideal_arm
+    diff_l_arm = l_arm_angle - ideal_arm
+    diff_r_leg = r_leg_angle - ideal_leg
+    diff_l_leg = l_leg_angle - ideal_leg
+    diff_r_hip = r_hip_angle - ideal_hip
+    diff_l_hip = l_hip_angle - ideal_hip
 
-        # Calculate the angle in radians and convert it to degrees
-        angle_radians = np.arccos(cosine_angle)
-        angle_arm_right = np.degrees(angle_radians)
-    except:
-        angle_arm_right = -999
-    print("Angle between upper arm and lower arm (right):", angle_arm_right)
+    # print("Difference in Right Arm Angle:", diff_r_arm)
+    # print("Difference in Left Arm Angle:", diff_l_arm)
+    # print("Difference in Right Leg Angle:", diff_r_leg)
+    # print("Difference in Left Leg Angle:", diff_l_leg)
+    # print("Difference in Right Hip Angle:", diff_r_hip)
+    # print("Difference in Left Hip Angle:", diff_l_hip)
 
-    # Extract coordinates for left arm
-    l_wrist = coordinates["Left Wrist"]
-    l_elbow = coordinates["Left Elbow"]
-    l_shoulder = coordinates["Left Shoulder"]
 
-    # Calculate upper and lower arm vectors for left arm
-    upper_arm_vector_left = l_shoulder - l_elbow
-    lower_arm_vector_left = l_wrist - l_elbow
+    column_names = ["angle_arm_right", "angle_arm_left", "angle_leg_right", "angle_leg_left", "angle_hip_right", "angle_hip_left",
+                    "diff_l_arm", "diff_r_arm", "diff_l_leg", "diff_r_leg", "diff_l_hip", "diff_r_hip"]
+    value_vector = [l_arm_angle, r_arm_angle, l_leg_angle, r_leg_angle, l_hip_angle, r_hip_angle,
+                    diff_l_arm, diff_r_arm, diff_l_leg, diff_r_leg, diff_l_hip, diff_r_hip]
+    d = dict(zip(column_names, value_vector))
 
-    # Calculate the dot product and magnitudes of the vectors for left arm
-    dot_product_left = np.dot(lower_arm_vector_left, upper_arm_vector_left)
-    magnitude_upper_arm_left = np.linalg.norm(upper_arm_vector_left)
-    magnitude_lower_arm_left = np.linalg.norm(lower_arm_vector_left)
+    #print(value_vector)
+    df = pd.DataFrame(d, index=[0])
 
-    try:
-        # Calculate the cosine of the angle between the vectors for left arm
-        cosine_angle_left = dot_product_left / (magnitude_upper_arm_left * magnitude_lower_arm_left)
+    df = df.fillna(-999)
 
-        # Calculate the angle in radians and convert it to degrees for left arm
-        angle_radians_left = np.arccos(cosine_angle_left)
-        angle_arm_left = np.degrees(angle_radians_left)
-
-    except:
-        angle_arm_left = -999
-
-    print("Angle between upper arm and lower arm (Left):", angle_arm_left)
-
-    # Extract coordinates of right hip, right knee, and right foot
-    r_hip = coordinates["Right Hip"]
-    r_knee = coordinates["Right Knee"]
-    r_ankle = coordinates["Right Ankle"]
-
-    # Extract coordinates of left hip, left knee, and left foot
-    l_hip = coordinates["Left Hip"]
-    l_knee = coordinates["Left Knee"]
-    l_ankle = coordinates["Left Ankle"]
-
-    # Calculate angles for right leg
-    r_hip_knee_vector = r_hip - r_knee
-    r_ankle_knee_vector = r_ankle - r_knee
-
-    # Calculate the dot product and magnitudes of the vectors
-    dot_product_r = np.dot(r_hip_knee_vector, r_ankle_knee_vector)
-    magnitude_r_hip_knee = np.linalg.norm(r_hip_knee_vector)
-    magnitude_r_ankle_knee = np.linalg.norm(r_ankle_knee_vector)
-
-    try:
-        # Calculate the cosine of the angle between the vectors
-        cosine_angle_r = dot_product_r / (magnitude_r_hip_knee * magnitude_r_ankle_knee)
-
-        # Calculate the angle in radians and convert it to degrees
-        angle_radians_r = np.arccos(cosine_angle_r)
-        angle_leg_right = np.degrees(angle_radians_r)
-
-    except:
-        angle_leg_right = -999
-
-    print("Angle between right hip, right knee, and right foot:", angle_leg_right)
-
-    # Calculate angles for left leg
-    l_hip_knee_vector = l_hip - l_knee
-    l_ankle_knee_vector = l_ankle - l_knee
-
-    # Calculate the dot product and magnitudes of the vectors
-    dot_product_l = np.dot(l_hip_knee_vector, l_ankle_knee_vector)
-    magnitude_l_hip_knee = np.linalg.norm(l_hip_knee_vector)
-    magnitude_l_ankle_knee = np.linalg.norm(l_ankle_knee_vector)
-
-    try:
-        # Calculate the cosine of the angle between the vectors
-        cosine_angle_l = dot_product_l / (magnitude_l_hip_knee * magnitude_l_ankle_knee)
-
-        # Calculate the angle in radians and convert it to degrees
-        angle_radians_l = np.arccos(cosine_angle_l)
-        angle_leg_left = np.degrees(angle_radians_l)
-
-    except:
-        angle_leg_left = -999
-
-    print("Angle between left hip, left knee, and left foot:", angle_leg_left)
-
-    # Extract coordinates of right shoulder
-    r_shoulder = coordinates["Right Shoulder"]
-
-    # Extract coordinates of left shoulder
-    l_shoulder = coordinates["Left Shoulder"]
-
-    # Calculate angles for right leg towards right shoulder
-    r_shoulder_hip_vector = - r_shoulder - r_hip
-    r_knee_hip_vector = r_knee - r_hip
-
-    # Calculate the dot product and magnitudes of the vectors
-    dot_product_r_shoulder = np.dot(r_shoulder_hip_vector, r_knee_hip_vector)
-    magnitude_r_shoulder_hip = np.linalg.norm(r_shoulder_hip_vector)
-    magnitude_r_knee_hip = np.linalg.norm(r_knee_hip_vector)
-
-    try:
-        # Calculate the cosine of the angle between the vectors
-        cosine_angle_r_shoulder = dot_product_r_shoulder / (magnitude_r_shoulder_hip * magnitude_r_knee_hip)
-
-        # Calculate the angle in radians and convert it to degrees
-        angle_radians_r_shoulder = np.arccos(cosine_angle_r_shoulder)
-        angle_hip_right = np.degrees(angle_radians_r_shoulder)
-
-    except:
-        angle_hip_right = -999
-
-    print("Angle between right shoulder, right hip, and right knee:", angle_hip_right)
-
-    # Calculate angles for left leg towards left shoulder
-    l_shoulder_hip_vector = l_shoulder - l_hip
-    l_knee_hip_vector = l_knee - l_hip
-
-    # Calculate the dot product and magnitudes of the vectors
-    dot_product_l_shoulder = np.dot(l_shoulder_hip_vector, l_knee_hip_vector)
-    magnitude_l_shoulder_hip = np.linalg.norm(l_shoulder_hip_vector)
-    magnitude_l_knee_hip = np.linalg.norm(l_knee_hip_vector)
-
-    try:
-        # Calculate the cosine of the angle between the vectors
-        cosine_angle_l_shoulder = dot_product_l_shoulder / (magnitude_l_shoulder_hip * magnitude_l_knee_hip)
-
-        # Calculate the angle in radians and convert it to degrees
-        angle_radians_l_shoulder = np.arccos(cosine_angle_l_shoulder)
-        angle_hip_left = np.degrees(angle_radians_l_shoulder)
-    except:
-        angle_hip_left = -999
-        print("Angle between left shoulder, left hip, and left knee:", angle_hip_left)
-
-    column_names = ["angle_arm_right", "angle_arm_left", "angle_leg_right", "angle_leg_left", "angle_hip_right", "angle_hip_left"]
-    values = [angle_arm_right, angle_arm_left, angle_leg_right, angle_leg_left, angle_hip_right, angle_hip_left]
-
-    # Combine column names and values using zip
-    data = zip(column_names, values)  # Unpack values using * operator
-
-    # Create the DataFrame
-    df = pd.DataFrame(data)
-
-    df = df.fillna(0)
-
-    print(df)
+    #print(df)
     return df
