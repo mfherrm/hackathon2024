@@ -2,7 +2,15 @@ from ultralytics import YOLO
 from getLabelPos import getLabelPos
 from transformBbox import transformBbox
 from setStatus import setStatus
+from getScore import getScore
 import pandas as pd
+from ui2 import MainWindow
+from PyQt5.QtWidgets import QApplication
+import sys
+
+app = QApplication(sys.argv)
+window = MainWindow()
+window.show()
 from openStream import openStream
 
 #frame = openStream("http://169.254.34.119/streaming/stream3/video.mjpeg", "admin", "sdi")
@@ -10,7 +18,7 @@ from openStream import openStream
 model = YOLO('yolov8m-pose.pt')
 
 #results = model(source=frame, show=True, conf=0.75, save=True, stream=True)
-results = model(source=0, show=True, conf=0.75, save=True, stream=True)
+results = model(source=0, show=False, conf=0.75, save=True, stream=True)
 
 bbox_orig = None
 bsize = 999999999
@@ -18,6 +26,7 @@ status_a = 'Decreasing'
 status_n = 'Decreasing'
 
 for r in results:
+    window.current_image = r.plot()
     try:
         x1, y1, x2, y2 = transformBbox(r.boxes.xywh[0][0], r.boxes.xywh[0][1], r.boxes.xywh[0][2], r.boxes.xywh[0][3])
         y2l = y2
@@ -45,8 +54,10 @@ for r in results:
         motion['status'] = ["start", "squat", "end"]
         motion.set_index('status')
         print(motion)
-        break
+        getScore(motion)
+        sys.exit(app.exec_())
 
+    QApplication.processEvents()
 
 
 

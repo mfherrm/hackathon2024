@@ -1,5 +1,5 @@
-def update_frame():
-    ret, frame = cap.read()
+def update_frame(result):
+    ret, frame = result.read()
     if ret:
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         img = Image.fromarray(frame)
