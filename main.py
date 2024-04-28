@@ -6,7 +6,9 @@ from getScore import getScore
 import pandas as pd
 from ui2 import MainWindow
 from PyQt5.QtWidgets import QApplication
+from ui3 import create_and_display_dataframe
 import sys
+from threading import Thread
 
 app = QApplication(sys.argv)
 window = MainWindow()
@@ -54,8 +56,10 @@ for r in results:
         motion['status'] = ["start", "squat", "end"]
         motion.set_index('status')
         print(motion)
-        getScore(motion)
-        sys.exit(app.exec_())
+        scdf = getScore(motion)
+        t2 = Thread(target=create_and_display_dataframe, args=(scdf,))
+        t2.start()
+        break
 
     QApplication.processEvents()
 

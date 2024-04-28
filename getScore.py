@@ -1,5 +1,7 @@
 import numpy as np
+import pandas as pd
 from getAdvice import getAdvice
+from scale import scale_value
 
 def getScore(df):
 
@@ -71,5 +73,17 @@ def getScore(df):
     # Calculate total score
     total_score = left_arm_score + right_arm_score + left_leg_score + right_leg_score + left_hip_score + right_hip_score
 
-    getAdvice(left_arm_diff, right_arm_diff, left_leg_diff, right_leg_diff, left_hip_diff, right_hip_diff)
-    print("Total Score (from 14):", total_score)
+    laa, raa, lla, rla, lha, rha = getAdvice(left_arm_diff, right_arm_diff, left_leg_diff, right_leg_diff, left_hip_diff, right_hip_diff)
+
+    body_part = ["Left Arm", "Right Arm", "Left Leg", "Right Leg", "Left Hip", "Right Hip"]
+    score = [left_arm_score, right_arm_score, left_leg_score, right_leg_score, left_hip_score, right_hip_score]
+    tr_score = []
+    for sc in score:
+        tr_score.append(scale_value(sc, 0, 15, 0, 10))
+    adv_vector = [laa, raa, lla, rla, lha, rha]
+
+    # print(value_vector)
+    df = pd.DataFrame({"Body part":body_part, "Score":tr_score, "Advice": adv_vector})
+    print(df)
+    print(("Total Score: %d"%(sum(tr_score))), " out of 10")
+    return df
